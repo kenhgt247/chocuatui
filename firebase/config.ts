@@ -1,22 +1,21 @@
-
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { 
-  initializeFirestore, 
-  persistentLocalCache, 
-  persistentMultipleTabManager,
   getFirestore 
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
+// Trong Vite, chúng ta nên sử dụng import.meta.env cho phía client
+// Tuy nhiên để đảm bảo tính tương thích, ta giữ fallback là các giá trị string
+// @google/genai Fix: Cast import.meta to any to resolve property 'env' does not exist error in TypeScript
 const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY || "AIzaSyCtoKGpDmxMOZp8txTnJdLpntwAGpN52RM",
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || "chocuatui-db139.firebaseapp.com",
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID || "chocuatui-db139",
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || "chocuatui-db139.firebasestorage.app",
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "683193248404",
-  appId: process.env.VITE_FIREBASE_APP_ID || "1:683193248404:web:028803dbd96967635ae281",
-  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID || "G-P7YD6LSMCC"
+  apiKey: ((import.meta as any).env?.VITE_FIREBASE_API_KEY as string) || "AIzaSyCtoKGpDmxMOZp8txTnJdLpntwAGpN52RM",
+  authDomain: ((import.meta as any).env?.VITE_FIREBASE_AUTH_DOMAIN as string) || "chocuatui-db139.firebaseapp.com",
+  projectId: ((import.meta as any).env?.VITE_FIREBASE_PROJECT_ID as string) || "chocuatui-db139",
+  storageBucket: ((import.meta as any).env?.VITE_FIREBASE_STORAGE_BUCKET as string) || "chocuatui-db139.firebasestorage.app",
+  messagingSenderId: ((import.meta as any).env?.VITE_FIREBASE_MESSAGING_SENDER_ID as string) || "683193248404",
+  appId: ((import.meta as any).env?.VITE_FIREBASE_APP_ID as string) || "1:683193248404:web:028803dbd96967635ae281",
+  measurementId: ((import.meta as any).env?.VITE_FIREBASE_MEASUREMENT_ID as string) || "G-P7YD6LSMCC"
 };
 
 // Initialize Firebase
