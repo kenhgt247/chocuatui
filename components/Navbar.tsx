@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Search, PlusSquare, MessageCircle, User, Bell } from 'lucide-react';
@@ -46,7 +45,11 @@ const Navbar: React.FC = () => {
             
             {user ? (
               <Link to="/profile" className="flex items-center gap-3 p-1.5 pr-4 hover:bg-slate-100 rounded-2xl border border-slate-100 transition-all">
-                <img src={profile?.photoURL} className="w-8 h-8 rounded-xl object-cover border border-white" alt="Avatar" />
+                <img 
+                  src={profile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`} 
+                  className="w-8 h-8 rounded-xl object-cover border border-white" 
+                  alt="Avatar" 
+                />
                 <span className="text-xs font-black text-slate-700">{profile?.displayName?.split(' ')[0]}</span>
               </Link>
             ) : (
