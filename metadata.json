@@ -1,0 +1,7 @@
+{
+  "name": "Chợ Của Tui",
+  "description": "Nền tảng rao vặt thông minh với AI hỗ trợ đăng tin siêu tốc, định giá chuẩn và chat realtime.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
