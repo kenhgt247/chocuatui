@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, ChevronRight, ChevronLeft, CheckCircle2, Upload, Loader2, DollarSign, Crown, Zap, Sparkles, X } from 'lucide-react';
@@ -39,9 +38,9 @@ const PostWizard: React.FC = () => {
     setAiLoading(true);
     try {
       const res = await aiSmartFill(previews[0], title);
-      if (res.suggestTitle) setTitle(res.suggestTitle);
-      if (res.category) setCategory(res.category);
-      if (res.condition) setCondition(res.condition);
+      if (res.suggestTitle) setTitle(String(res.suggestTitle));
+      if (res.category) setCategory(String(res.category));
+      if (res.condition) setCondition(String(res.condition));
     } catch (err) {
       alert("AI đang bận, bạn vui lòng tự điền nhé.");
     } finally {
@@ -62,7 +61,7 @@ const PostWizard: React.FC = () => {
     setAiLoading(true);
     try {
       const res = await aiDescriptionAssistant({ title, price: Number(price), category, condition });
-      setDescription(res.description);
+      setDescription(res.description || '');
     } catch (err) {
       alert("Không thể tạo mô tả lúc này.");
     } finally {

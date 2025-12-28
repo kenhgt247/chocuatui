@@ -5,11 +5,25 @@ import { GoogleGenAI } from "@google/genai";
  * Uses Gemini 3 Flash for super-fast analysis and low latency.
  */
 
+export interface SmartFillResult {
+  category?: string;
+  condition?: string;
+  brand?: string;
+  model?: string;
+  suggestTitle?: string;
+  keywords?: string[];
+}
+
+export interface PriceInsightResult {
+  rating: 'Rẻ' | 'Hợp lý' | 'Cao';
+  explanation: string;
+}
+
 const getAIInstance = () => {
   return new GoogleGenAI({ apiKey: (process.env as any).API_KEY });
 };
 
-export const aiSmartFill = async (imageData: string, title?: string) => {
+export const aiSmartFill = async (imageData: string, title?: string): Promise<SmartFillResult> => {
   try {
     const ai = getAIInstance();
     const response = await ai.models.generateContent({
@@ -38,7 +52,7 @@ export const aiSmartFill = async (imageData: string, title?: string) => {
   }
 };
 
-export const aiPriceInsight = async (price: number, category: string, recentPrices: number[]) => {
+export const aiPriceInsight = async (price: number, category: string, recentPrices: number[]): Promise<PriceInsightResult> => {
   try {
     const ai = getAIInstance();
     const prompt = `Sản phẩm danh mục "${category}" giá ${price} VNĐ. 
@@ -52,14 +66,14 @@ export const aiPriceInsight = async (price: number, category: string, recentPric
       config: { responseMimeType: "application/json" }
     });
 
-    return JSON.parse(response.text || '{}');
+    return JSON.parse(response.text || '{"rating": "Hợp lý", "explanation": "Không có dữ liệu so sánh"}');
   } catch (error) {
     console.error('AI PriceInsight Error:', error);
     throw error;
   }
 };
 
-export const aiDescriptionAssistant = async (data: { title: string, price: number, category: string, condition: string }) => {
+export const aiDescriptionAssistant = async (data: { title: string, price: number, category: string, condition: string }): Promise<{ description: string }> => {
   try {
     const ai = getAIInstance();
     const prompt = `Viết mô tả rao vặt chuyên nghiệp cho: ${data.title}, giá ${data.price}, danh mục ${data.category}, tình trạng ${data.condition}. 
@@ -75,7 +89,7 @@ export const aiDescriptionAssistant = async (data: { title: string, price: numbe
       contents: prompt
     });
 
-    return { description: response.text };
+    return { description: response.text || '' };
   } catch (error) {
     console.error('AI Description Error:', error);
     throw error;
