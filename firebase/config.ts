@@ -1,13 +1,11 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { 
-  getFirestore 
+  getFirestore, 
+  enableIndexedDbPersistence 
 } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-// Trong Vite, chúng ta nên sử dụng import.meta.env cho phía client
-// Tuy nhiên để đảm bảo tính tương thích, ta giữ fallback là các giá trị string
-// @google/genai Fix: Cast import.meta to any to resolve property 'env' does not exist error in TypeScript
 const firebaseConfig = {
   apiKey: ((import.meta as any).env?.VITE_FIREBASE_API_KEY as string) || "AIzaSyCtoKGpDmxMOZp8txTnJdLpntwAGpN52RM",
   authDomain: ((import.meta as any).env?.VITE_FIREBASE_AUTH_DOMAIN as string) || "chocuatui-db139.firebaseapp.com",
@@ -26,5 +24,16 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
+
+// Enable offline persistence
+if (typeof window !== 'undefined') {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+    } else if (err.code === 'unimplemented') {
+      console.warn('The current browser does not support all of the features required to enable persistence');
+    }
+  });
+}
 
 export default app;

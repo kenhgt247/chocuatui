@@ -6,6 +6,12 @@ import { useAuth } from '../context/AuthContext';
 const Navbar: React.FC = () => {
   const { user, profile } = useAuth();
 
+  const getAvatarUrl = () => {
+    if (profile?.photoURL) return profile.photoURL;
+    if (user?.uid) return `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`;
+    return "https://api.dicebear.com/7.x/avataaars/svg?seed=guest";
+  };
+
   return (
     <header className="hidden md:block sticky top-0 z-[100] bg-white/90 backdrop-blur-xl border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-8">
@@ -46,11 +52,11 @@ const Navbar: React.FC = () => {
             {user ? (
               <Link to="/profile" className="flex items-center gap-3 p-1.5 pr-4 hover:bg-slate-100 rounded-2xl border border-slate-100 transition-all">
                 <img 
-                  src={profile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.uid}`} 
+                  src={getAvatarUrl()} 
                   className="w-8 h-8 rounded-xl object-cover border border-white" 
                   alt="Avatar" 
                 />
-                <span className="text-xs font-black text-slate-700">{profile?.displayName?.split(' ')[0]}</span>
+                <span className="text-xs font-black text-slate-700">{profile?.displayName?.split(' ')[0] || 'Tài khoản'}</span>
               </Link>
             ) : (
               <Link to="/auth" className="text-sm font-black text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-xl transition-all">Đăng nhập</Link>

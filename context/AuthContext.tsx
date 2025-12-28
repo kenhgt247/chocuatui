@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { auth, db } from '../firebase/config';
@@ -35,9 +34,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(firebaseUser);
       if (firebaseUser) {
         try {
-          // Fetch or create user profile
           const userDoc = doc(db, 'users', firebaseUser.uid);
+          // Try to get from cache first or server
           const snap = await getDoc(userDoc);
+          
           if (snap.exists()) {
             setProfile(snap.data() as UserProfile);
           } else {
@@ -51,13 +51,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               badges: [],
               createdAt: serverTimestamp(),
             };
-            // setDoc might fail if offline, but since we are creating it, we want it to eventually sync
-            await setDoc(userDoc, newProfile);
+            
+            // Non-blocking setDoc
+            setDoc(userDoc, newProfile).catch(e => console.warn("Offline: Failed to sync new profile", e));
             setProfile(newProfile as UserProfile);
           }
-        } catch (err) {
-          console.error("Error fetching user profile:", err);
-          // If we fail to fetch profile (likely offline), we set basic profile info from auth
+        } catch (err: any) {
+          console.error("AuthContext Profile Fetch Error:", err);
+          // Fallback to basic info if Firestore fails (likely offline and not in cache)
           setProfile({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
